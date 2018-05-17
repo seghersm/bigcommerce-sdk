@@ -60,8 +60,11 @@ public class Product {
 	@XmlElement(name = "sort_order")
 	private Integer sortOrder;
 
-	@XmlElement(name = "custom_url ")
+	@XmlElement(name = "custom_url")
 	private CustomUrl productUrl;
+
+	@XmlElement(name = "related_products")
+	private List<Integer> relatedProducts;
 
 	public Integer getId() {
 		return id;
@@ -191,6 +194,30 @@ public class Product {
 		this.price = price;
 	}
 
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public String getSearchKeywords() {
+		return searchKeywords;
+	}
+
+	public void setSearchKeywords(String searchKeywords) {
+		this.searchKeywords = searchKeywords;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public CustomUrl getProductUrl() {
+		return productUrl;
+	}
+
+	public void setProductUrl(CustomUrl productUrl) {
+		this.productUrl = productUrl;
+  }
+
 	public Boolean getVisible() {
 		return isVisible;
 	}
@@ -245,6 +272,14 @@ public class Product {
 
 	public void setProductUrl(CustomUrl productUrl) {
 		this.productUrl = productUrl;
+	}
+
+	public List<Integer> getRelatedProducts() {
+		return relatedProducts;
+	}
+
+	public void setRelatedProducts(List<Integer> relatedProducts) {
+		this.relatedProducts = relatedProducts;
 	}
 }
 
