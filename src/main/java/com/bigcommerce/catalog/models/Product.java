@@ -238,6 +238,14 @@ public class Product {
 		return pageTitle;
 	}
 
+	public List<Integer> getRelatedProducts() {
+		return relatedProducts;
+	}
+
+	public void setRelatedProducts(List<Integer> relatedProducts) {
+		this.relatedProducts = relatedProducts;
+	}
+
 	public void setPageTitle(String pageTitle) {
 		this.pageTitle = pageTitle;
 	}
@@ -250,12 +258,5 @@ public class Product {
 		this.metaDescription = metaDescription;
 	}
 
-	public List<Integer> getRelatedProducts() {
-		return relatedProducts;
-	}
-
-	public void setRelatedProducts(List<Integer> relatedProducts) {
-		this.relatedProducts = relatedProducts;
-	}
 }
 
