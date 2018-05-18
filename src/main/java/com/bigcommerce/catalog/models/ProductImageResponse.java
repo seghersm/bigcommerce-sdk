@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ProductImageResponse {
 
 	private ProductImage data;
+	private Meta meta = new Meta();
 
 	public ProductImage getData() {
 		return data;
@@ -15,4 +16,11 @@ public class ProductImageResponse {
 		this.data = data;
 	}
 
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
 }
