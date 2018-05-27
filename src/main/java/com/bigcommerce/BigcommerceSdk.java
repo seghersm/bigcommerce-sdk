@@ -48,26 +48,26 @@ public class BigcommerceSdk {
 
 	public static final String VARIANTS = "variants";
 	public static final String CUSTOM_FIELDS = "custom_fields";
-
-	private static final String CATALOG = "catalog";
-	private static final String CATEGORIES= "categories";
-	private static final String SUMMARY = "summary";
-	private static final String PRODUCTS = "products";
-	private static final String CUSTOM_FIELDS_PATH = "custom-fields";
-	private static final String BRANDS = "brands";
-	private static final String ORDERS = "orders";
-	private static final String CUSTOMERS = "customers";
-	private static final String LIMIT = "limit";
-	private static final String PAGE = "page";
-	private static final String INCLUDE = "include";
-	private static final String SHIPPINGADDRESSES = "shipping_addresses";
-	private static final String SHIPMENTS = "shipments";
-	private static final String MIN_DATE_CREATED = "min_date_created";
-	private static final String STORE = "store";
-	private static final String METAFIELDS = "metafields";
-	private static final String IMAGES = "images";
-	private static final String PARENT_ID = "parent_id";
+  public static final String CATALOG = "catalog";
+  public static final String CATEGORIES= "categories";
+  public static final String SUMMARY = "summary";
+  public static final String PRODUCTS = "products";
+  public static final String CUSTOM_FIELDS_PATH = "custom-fields";
+  public static final String BRANDS = "brands";
+  public static final String ORDERS = "orders";
+  public static final String CUSTOMERS = "customers";
+  public static final String LIMIT = "limit";
+  public static final String PAGE = "page";
+  public static final String INCLUDE = "include";
+  public static final String SHIPPINGADDRESSES = "shipping_addresses";
+  public static final String SHIPMENTS = "shipments";
+  public static final String MIN_DATE_CREATED = "min_date_created";
+  public static final String STORE = "store";
+  public static final String METAFIELDS = "metafields";
+  public static final String IMAGES = "images";
+  public static final String PARENT_ID = "parent_id";
 	public static final int MAX_LIMIT = 250;
+
 	private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON + ";charset=UTF-8";
 	private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
 	private static final String TREE = "tree";

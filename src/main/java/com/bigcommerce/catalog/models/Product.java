@@ -66,6 +66,9 @@ public class Product {
 	@XmlElement(name = "related_products")
 	private List<Integer> relatedProducts;
 
+	@XmlElement(name = "images")
+	private List<ProductImage> productImages;
+
 	public Integer getId() {
 		return id;
 	}
@@ -258,5 +261,12 @@ public class Product {
 		this.metaDescription = metaDescription;
 	}
 
+	public List<ProductImage> getProductImages() {
+		return productImages;
+	}
+
+	public void setProductImages(List<ProductImage> productImages) {
+		this.productImages = productImages;
+	}
 }
 

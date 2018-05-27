@@ -32,6 +32,18 @@ public class ProductImage {
 	@XmlElement(name = "image_file")
 	private String imageFile;
 
+	@XmlElement(name = "url_zoom")
+	private String urlZoom;
+
+	@XmlElement(name = "url_standard")
+	private String urlStandard;
+
+	@XmlElement(name = "url_thumbnail")
+	private String urlThumbnail;
+
+	@XmlElement(name = "url_tiny")
+	private String urlTiny;
+
 	private String description;
 
 	public Integer getId() {
@@ -88,5 +100,37 @@ public class ProductImage {
 
 	public void setImageFile(String imageFile) {
 		this.imageFile = imageFile;
+	}
+
+	public String getUrlZoom() {
+		return urlZoom;
+	}
+
+	public void setUrlZoom(String urlZoom) {
+		this.urlZoom = urlZoom;
+	}
+
+	public String getUrlStandard() {
+		return urlStandard;
+	}
+
+	public void setUrlStandard(String urlStandard) {
+		this.urlStandard = urlStandard;
+	}
+
+	public String getUrlThumbnail() {
+		return urlThumbnail;
+	}
+
+	public void setUrlThumbnail(String urlThumbnail) {
+		this.urlThumbnail = urlThumbnail;
+	}
+
+	public String getUrlTiny() {
+		return urlTiny;
+	}
+
+	public void setUrlTiny(String urlTiny) {
+		this.urlTiny = urlTiny;
 	}
 }
