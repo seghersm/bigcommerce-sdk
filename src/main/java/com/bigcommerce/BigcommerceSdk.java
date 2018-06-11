@@ -1,5 +1,6 @@
 package com.bigcommerce;
 
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +21,10 @@ import javax.ws.rs.core.Response.Status;
 import com.bigcommerce.catalog.models.*;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,29 +49,30 @@ public class BigcommerceSdk {
 	static final String ACCESS_TOKEN_HEADER = "X-Auth-Token";
 	static final String RATE_LIMIT_TIME_RESET_HEADER = "X-Rate-Limit-Time-Reset-Ms";
 
-	static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
+    static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 
-	public static final String VARIANTS = "variants";
-	public static final String CUSTOM_FIELDS = "custom_fields";
-  public static final String CATALOG = "catalog";
-  public static final String CATEGORIES= "categories";
-  public static final String SUMMARY = "summary";
-  public static final String PRODUCTS = "products";
-  public static final String CUSTOM_FIELDS_PATH = "custom-fields";
-  public static final String BRANDS = "brands";
-  public static final String ORDERS = "orders";
-  public static final String CUSTOMERS = "customers";
-  public static final String LIMIT = "limit";
-  public static final String PAGE = "page";
-  public static final String INCLUDE = "include";
-  public static final String SHIPPINGADDRESSES = "shipping_addresses";
-  public static final String SHIPMENTS = "shipments";
-  public static final String MIN_DATE_CREATED = "min_date_created";
-  public static final String STORE = "store";
-  public static final String METAFIELDS = "metafields";
-  public static final String IMAGES = "images";
-  public static final String PARENT_ID = "parent_id";
-	public static final int MAX_LIMIT = 250;
+    public static final String VARIANTS = "variants";
+    public static final String CUSTOM_FIELDS = "custom_fields";
+    public static final String CATALOG = "catalog";
+    public static final String CATEGORIES = "categories";
+    public static final String SUMMARY = "summary";
+    public static final String PRODUCTS = "products";
+    public static final String CUSTOM_FIELDS_PATH = "custom-fields";
+    public static final String BRANDS = "brands";
+    public static final String ORDERS = "orders";
+    public static final String CUSTOMERS = "customers";
+    public static final String LIMIT = "limit";
+    public static final String PAGE = "page";
+    public static final String INCLUDE = "include";
+    public static final String SHIPPINGADDRESSES = "shipping_addresses";
+    public static final String SHIPMENTS = "shipments";
+    public static final String MIN_DATE_CREATED = "min_date_created";
+    public static final String STORE = "store";
+    public static final String METAFIELDS = "metafields";
+    public static final String IMAGES = "images";
+    public static final String IMAGE = "image";
+    public static final String PARENT_ID = "parent_id";
+    public static final int MAX_LIMIT = 250;
 
 	private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON + ";charset=UTF-8";
 	private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
@@ -74,9 +80,12 @@ public class BigcommerceSdk {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BigcommerceSdk.class);
 
-	private static final Client CLIENT = ClientBuilder.newClient().register(JacksonFeature.class)
-			.property(ClientProperties.CONNECT_TIMEOUT, 60000).property(ClientProperties.READ_TIMEOUT, 600000).register(
-					new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
+	private static final Client CLIENT = ClientBuilder.newClient()
+		.register(MultiPartFeature.class)
+		.register(JacksonFeature.class)
+		.property(ClientProperties.CONNECT_TIMEOUT, 60000)
+		.property(ClientProperties.READ_TIMEOUT, 600000)
+		.register(new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
 	private final WebTarget baseWebTargetV3;
 
 	/*
@@ -173,6 +182,20 @@ public class BigcommerceSdk {
 		return categoryResponse.getData();
 	}
 
+	public ProductImageResponse createCategoryImage(final int categoryId, String imageUrl){
+		Response response = CLIENT.target(imageUrl).request().get();
+
+		if (response.getStatus() != Status.OK.getStatusCode()) return null;
+
+		InputStream in = response.readEntity(InputStream.class);
+		StreamDataBodyPart filePart = new StreamDataBodyPart("image_file", in);
+		final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+
+
+		final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(CATEGORIES).path(String.valueOf(categoryId)).path(IMAGE);
+		return post(webTarget, multipart, ProductImageResponse.class);
+	}
+
 	public Category updateCategory(final Category category) {
 		final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(CATEGORIES).path(String.valueOf(category.getId()));
 		final CategoryResponse categoryResponse = put(webTarget, category, CategoryResponse.class);
@@ -184,26 +207,12 @@ public class BigcommerceSdk {
 		return getCategories(page, MAX_LIMIT);
 	}
 
-	public Categories getCategories(final int page, final int limit) {
-		return getCategories(null, page, limit);
-	}
-
-	public Categories getCategories(final Integer parentId, final int page, final int limit) {
-		WebTarget webTarget = baseWebTargetV3
-				.path(CATALOG)
-				.path(CATEGORIES)
-				.queryParam(LIMIT, limit)
-				.queryParam(PAGE, page);
-
-		if (parentId != null) {
-			webTarget = webTarget.queryParam(PARENT_ID, parentId);
-		}
-
+	public Categories getCategories(final int page, final int limit){
+		final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(CATEGORIES)
+				.queryParam(LIMIT, limit).queryParam(PAGE, page);
 		final CategoriesResponse categoriesResponse = get(webTarget, CategoriesResponse.class);
 		final List<Category> categories= categoriesResponse.getData();
-
 		final Pagination pagination = categoriesResponse.getMeta().getPagination();
-
 		return new Categories(categories, pagination);
 	}
 
@@ -237,9 +246,7 @@ public class BigcommerceSdk {
 	}
 
 	public Product updateProduct(final Product product) {
-		final WebTarget webTarget = baseWebTargetV3.path(CATALOG)
-				.path(PRODUCTS)
-				.path(String.valueOf(product.getId()));
+		final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(PRODUCTS).path(String.valueOf(product.getId()));
 		final ProductResponse productResponse = put(webTarget, product, ProductResponse.class);
 		return productResponse.getData();
 	}
@@ -265,10 +272,8 @@ public class BigcommerceSdk {
 	}
 
 	public ProductImage updateProductImage(final ProductImage productImage) {
-		final WebTarget webTarget = baseWebTargetV3.path(CATALOG)
-				.path(PRODUCTS)
-				.path(String.valueOf(productImage.getProductId()))
-				.path(IMAGES)
+		final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(PRODUCTS)
+				.path(String.valueOf(productImage.getProductId())).path(IMAGES)
 				.path(String.valueOf(productImage.getId()));
 		final ProductImageResponse productImageResponse = put(webTarget, productImage, ProductImageResponse.class);
 
@@ -563,6 +568,16 @@ public class BigcommerceSdk {
 			final Entity<T> entity = Entity.entity(object, MEDIA_TYPE);
 			return webTarget.request().header(CLIENT_ID_HEADER, getClientId())
 					.header(ACCESS_TOKEN_HEADER, getAccessToken()).post(entity);
+		};
+		final Response response = invokeResponseCallable(responseCallable);
+		return handleResponse(response, entityType, Status.OK, Status.CREATED);
+	}
+
+	private <V> V post(final WebTarget webTarget, final MultiPart multiPart, final Class<V> entityType) {
+		final Callable<Response> responseCallable = () -> {
+			return webTarget.request().header(CLIENT_ID_HEADER, getClientId())
+				.header(ACCESS_TOKEN_HEADER, getAccessToken())
+				.post(Entity.entity(multiPart, multiPart.getMediaType()));
 		};
 		final Response response = invokeResponseCallable(responseCallable);
 		return handleResponse(response, entityType, Status.OK, Status.CREATED);
