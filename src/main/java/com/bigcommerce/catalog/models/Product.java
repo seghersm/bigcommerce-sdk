@@ -37,16 +37,37 @@ public class Product {
 	@XmlElement(name = "is_condition_shown")
 	private Boolean isConditionShown;
 
-	@XmlElement(name = "metaKeywords")
+	@XmlElement(name = "meta_keywords")
 	private List<String> metaKeywords = new LinkedList<>();
+
+	@XmlElement(name = "search_keywords ")
+	private String searchKeywords;
 
 	@XmlElement(name = "inventory_tracking")
 	private String inventoryTracking;
 	private String condition;
 	private BigDecimal price;
 
+	@XmlElement(name = "page_title")
+	private String pageTitle;
+
+	@XmlElement(name = "meta_description")
+	private String metaDescription;
+
 	@XmlElement(name = "custom_fields")
 	private List<CustomField> customFields = new LinkedList<>();
+
+	@XmlElement(name = "sort_order")
+	private Integer sortOrder;
+
+	@XmlElement(name = "custom_url")
+	private CustomUrl customUrl;
+
+	@XmlElement(name = "related_products")
+	private List<Integer> relatedProducts;
+
+	@XmlElement(name = "images")
+	private List<ProductImage> productImages;
 
 	public Integer getId() {
 		return id;
@@ -176,4 +197,76 @@ public class Product {
 		this.price = price;
 	}
 
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public String getSearchKeywords() {
+		return searchKeywords;
+	}
+
+	public void setSearchKeywords(String searchKeywords) {
+		this.searchKeywords = searchKeywords;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public CustomUrl getCustomUrl() {
+		return customUrl;
+	}
+
+	public void setCustomUrl(CustomUrl customUrl) {
+		this.customUrl = customUrl;
+	}
+
+	public Boolean getVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(Boolean visible) {
+		isVisible = visible;
+	}
+
+	public Boolean getConditionShown() {
+		return isConditionShown;
+	}
+
+	public void setConditionShown(Boolean conditionShown) {
+		isConditionShown = conditionShown;
+	}
+
+	public String getPageTitle() {
+		return pageTitle;
+	}
+
+	public List<Integer> getRelatedProducts() {
+		return relatedProducts;
+	}
+
+	public void setRelatedProducts(List<Integer> relatedProducts) {
+		this.relatedProducts = relatedProducts;
+	}
+
+	public void setPageTitle(String pageTitle) {
+		this.pageTitle = pageTitle;
+	}
+
+	public String getMetaDescription() {
+		return metaDescription;
+	}
+
+	public void setMetaDescription(String metaDescription) {
+		this.metaDescription = metaDescription;
+	}
+
+	public List<ProductImage> getProductImages() {
+		return productImages;
+	}
+
+	public void setProductImages(List<ProductImage> productImages) {
+		this.productImages = productImages;
+	}
 }
+
