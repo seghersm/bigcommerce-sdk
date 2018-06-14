@@ -4,25 +4,25 @@ import java.util.List;
 
 public class Products implements PaginatedModel<Product> {
 
-	private final List<Product> products;
-	private final Pagination pagination;
+  private final List<Product> products;
+  private final Pagination pagination;
 
-	public Products(final List<Product> products, final Pagination pagination) {
-		this.products = products;
-		this.pagination = pagination;
-	}
+  public Products(final List<Product> products, final Pagination pagination) {
+    this.products = products;
+    this.pagination = pagination;
+  }
 
-	public List<Product> getProducts() {
-		return products;
-	}
+  public List<Product> getProducts() {
+    return products;
+  }
 
-	public Pagination getPagination() {
-		return pagination;
-	}
+  public Pagination getPagination() {
+    return pagination;
+  }
 
-    @Override
-    public List<Product> getItems() {
-        return getProducts();
-    }
+  @Override
+  public List<Product> getItems() {
+    return getProducts();
+  }
 
 }

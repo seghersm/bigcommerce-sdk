@@ -5,22 +5,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ProductImageResponse {
 
-	private ProductImage data;
-	private Meta meta = new Meta();
+  private ProductImage data;
+  private Meta meta = new Meta();
 
-	public ProductImage getData() {
-		return data;
-	}
+  public ProductImage getData() {
+    return data;
+  }
 
-	public void setData(final ProductImage data) {
-		this.data = data;
-	}
+  public void setData(final ProductImage data) {
+    this.data = data;
+  }
 
-	public Meta getMeta() {
-		return meta;
-	}
+  public Meta getMeta() {
+    return meta;
+  }
 
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+  public void setMeta(Meta meta) {
+    this.meta = meta;
+  }
 }

@@ -4,23 +4,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ProductResponse {
-	private Product data;
 
-	private Meta meta;
+  private Product data;
 
-	public Product getData() {
-		return data;
-	}
+  private Meta meta;
 
-	public void setData(final Product data) {
-		this.data = data;
-	}
+  public Product getData() {
+    return data;
+  }
 
-	public Meta getMeta() {
-		return meta;
-	}
+  public void setData(final Product data) {
+    this.data = data;
+  }
 
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+  public Meta getMeta() {
+    return meta;
+  }
+
+  public void setMeta(Meta meta) {
+    this.meta = meta;
+  }
 }

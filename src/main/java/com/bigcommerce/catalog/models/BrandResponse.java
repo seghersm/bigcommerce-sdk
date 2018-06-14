@@ -5,23 +5,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class BrandResponse {
 
-	private Brand data;
+  private Brand data;
 
-	private Meta meta = new Meta();
+  private Meta meta = new Meta();
 
-	public Brand getData() {
-		return data;
-	}
+  public Brand getData() {
+    return data;
+  }
 
-	public void setData(Brand data) {
-		this.data = data;
-	}
+  public void setData(Brand data) {
+    this.data = data;
+  }
 
-	public Meta getMeta() {
-		return meta;
-	}
+  public Meta getMeta() {
+    return meta;
+  }
 
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+  public void setMeta(Meta meta) {
+    this.meta = meta;
+  }
 }

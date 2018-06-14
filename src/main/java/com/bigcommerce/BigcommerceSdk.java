@@ -1,34 +1,56 @@
 package com.bigcommerce;
 
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import com.bigcommerce.catalog.models.*;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.bigcommerce.catalog.models.Address;
+import com.bigcommerce.catalog.models.AddressResponse;
+import com.bigcommerce.catalog.models.Brand;
+import com.bigcommerce.catalog.models.BrandResponse;
+import com.bigcommerce.catalog.models.Brands;
+import com.bigcommerce.catalog.models.BrandsResponse;
+import com.bigcommerce.catalog.models.CatalogSummary;
+import com.bigcommerce.catalog.models.CatalogSummaryResponse;
+import com.bigcommerce.catalog.models.Categories;
+import com.bigcommerce.catalog.models.CategoriesResponse;
+import com.bigcommerce.catalog.models.Category;
+import com.bigcommerce.catalog.models.CategoryResponse;
+import com.bigcommerce.catalog.models.CustomField;
+import com.bigcommerce.catalog.models.CustomFieldResponse;
+import com.bigcommerce.catalog.models.Customer;
+import com.bigcommerce.catalog.models.CustomersResponse;
+import com.bigcommerce.catalog.models.GenericDelete;
+import com.bigcommerce.catalog.models.Hook;
+import com.bigcommerce.catalog.models.HookCreationRequest;
+import com.bigcommerce.catalog.models.HookResponse;
+import com.bigcommerce.catalog.models.LineItem;
+import com.bigcommerce.catalog.models.LineItemsResponse;
+import com.bigcommerce.catalog.models.Metafield;
+import com.bigcommerce.catalog.models.MetafieldResponse;
+import com.bigcommerce.catalog.models.Metafields;
+import com.bigcommerce.catalog.models.MetafieldsResponse;
+import com.bigcommerce.catalog.models.Order;
+import com.bigcommerce.catalog.models.OrderHookResponse;
+import com.bigcommerce.catalog.models.OrderStatus;
+import com.bigcommerce.catalog.models.OrderStatusResponse;
+import com.bigcommerce.catalog.models.OrdersResponse;
+import com.bigcommerce.catalog.models.Pagination;
+import com.bigcommerce.catalog.models.Product;
+import com.bigcommerce.catalog.models.ProductImage;
+import com.bigcommerce.catalog.models.ProductImageResponse;
+import com.bigcommerce.catalog.models.ProductImages;
+import com.bigcommerce.catalog.models.ProductImagesResponse;
+import com.bigcommerce.catalog.models.ProductResponse;
+import com.bigcommerce.catalog.models.Products;
+import com.bigcommerce.catalog.models.ProductsResponse;
+import com.bigcommerce.catalog.models.Shipment;
+import com.bigcommerce.catalog.models.ShipmentCreationRequest;
+import com.bigcommerce.catalog.models.ShipmentResponse;
+import com.bigcommerce.catalog.models.ShipmentUpdateRequest;
+import com.bigcommerce.catalog.models.Store;
+import com.bigcommerce.catalog.models.SubscriberResponse;
+import com.bigcommerce.catalog.models.Subscribers;
+import com.bigcommerce.catalog.models.Variant;
+import com.bigcommerce.catalog.models.VariantResponse;
+import com.bigcommerce.catalog.models.Variants;
+import com.bigcommerce.catalog.models.VariantsResponse;
 import com.bigcommerce.exceptions.BigcommerceErrorResponseException;
 import com.bigcommerce.exceptions.BigcommerceException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,16 +62,33 @@ import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.github.rholder.retry.WaitStrategy;
+import java.io.InputStream;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BigcommerceSdk {
-
-  static final String API_VERSION_V2 = "v2";
-  static final String API_VERSION_V3 = "v3";
-  static final String CLIENT_ID_HEADER = "X-Auth-Client";
-  static final String ACCESS_TOKEN_HEADER = "X-Auth-Token";
-  static final String RATE_LIMIT_TIME_RESET_HEADER = "X-Rate-Limit-Time-Reset-Ms";
-
-  static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
 
   public static final String VARIANTS = "variants";
   public static final String CUSTOM_FIELDS = "custom_fields";
@@ -65,8 +104,6 @@ public class BigcommerceSdk {
   public static final String PAGE = "page";
   public static final String INCLUDE = "include";
   public static final String SHIPPINGADDRESSES = "shipping_addresses";
-  private static final String HOOKS = "hooks";
-  private static final String SKU = "sku";
   public static final String SHIPMENTS = "shipments";
   public static final String SUBSCRIBERS = "subscribers";
   public static final String MIN_DATE_CREATED = "min_date_created";
@@ -76,7 +113,14 @@ public class BigcommerceSdk {
   public static final String IMAGE = "image";
   public static final String PARENT_ID = "parent_id";
   public static final int MAX_LIMIT = 250;
-
+  static final String API_VERSION_V2 = "v2";
+  static final String API_VERSION_V3 = "v3";
+  static final String CLIENT_ID_HEADER = "X-Auth-Client";
+  static final String ACCESS_TOKEN_HEADER = "X-Auth-Token";
+  static final String RATE_LIMIT_TIME_RESET_HEADER = "X-Rate-Limit-Time-Reset-Ms";
+  static final int TOO_MANY_REQUESTS_STATUS_CODE = 429;
+  private static final String HOOKS = "hooks";
+  private static final String SKU = "sku";
   private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON + ";charset=UTF-8";
   private static final String RETRY_FAILED_MESSAGE = "Request retry has failed.";
   private static final String TREE = "tree";
@@ -103,35 +147,14 @@ public class BigcommerceSdk {
   private final long requestRetryTimeoutDuration;
   private final TimeUnit requestRetryTimeoutUnit;
 
-  public static interface ApiUrlStep {
-
-    RequestRetryTimeoutStep withApiUrl(final String apiUrl);
-  }
-
-  public static interface RequestRetryTimeoutStep {
-
-    StoreHashStep withRequestRetryTimeout(final long requestRetryTimeoutDuration,
-        final TimeUnit requestRetryTimeoutUnit);
-  }
-
-  public static interface StoreHashStep {
-
-    ClientIdStep withStoreHash(final String storeHash);
-  }
-
-  public static interface ClientIdStep {
-
-    AccessTokenStep withClientId(final String clientId);
-  }
-
-  public static interface AccessTokenStep {
-
-    BuildStep withAccessToken(final String accessToken);
-  }
-
-  public static interface BuildStep {
-
-    BigcommerceSdk build();
+  private BigcommerceSdk(final Steps steps) {
+    this.baseWebTargetV3 = CLIENT.target(steps.apiUrl).path(steps.storeHash).path(API_VERSION_V3);
+    this.baseWebTargetV2 = CLIENT.target(steps.apiUrl).path(steps.storeHash).path(API_VERSION_V2);
+    this.storeHash = steps.storeHash;
+    this.clientId = steps.clientId;
+    this.accessToken = steps.accessToken;
+    this.requestRetryTimeoutDuration = steps.requestRetryTimeoutDuration;
+    this.requestRetryTimeoutUnit = steps.requestRetryTimeoutUnit;
   }
 
   public static StoreHashStep newBuilder() {
@@ -557,66 +580,6 @@ public class BigcommerceSdk {
     return metafieldResponse.getData();
   }
 
-  private BigcommerceSdk(final Steps steps) {
-    this.baseWebTargetV3 = CLIENT.target(steps.apiUrl).path(steps.storeHash).path(API_VERSION_V3);
-    this.baseWebTargetV2 = CLIENT.target(steps.apiUrl).path(steps.storeHash).path(API_VERSION_V2);
-    this.storeHash = steps.storeHash;
-    this.clientId = steps.clientId;
-    this.accessToken = steps.accessToken;
-    this.requestRetryTimeoutDuration = steps.requestRetryTimeoutDuration;
-    this.requestRetryTimeoutUnit = steps.requestRetryTimeoutUnit;
-  }
-
-  private static class Steps
-      implements ApiUrlStep, RequestRetryTimeoutStep, StoreHashStep, ClientIdStep, AccessTokenStep,
-      BuildStep {
-
-    private String apiUrl = "https://api.bigcommerce.com/stores";
-    private long requestRetryTimeoutDuration = 5;
-    private TimeUnit requestRetryTimeoutUnit = TimeUnit.MINUTES;
-    private String storeHash;
-    private String clientId;
-    private String accessToken;
-
-    @Override
-    public RequestRetryTimeoutStep withApiUrl(final String apiUrl) {
-      this.apiUrl = apiUrl;
-      return this;
-    }
-
-    @Override
-    public StoreHashStep withRequestRetryTimeout(final long requestRetryTimeoutDuration,
-        final TimeUnit requestRetryTimeoutUnit) {
-      this.requestRetryTimeoutDuration = requestRetryTimeoutDuration;
-      this.requestRetryTimeoutUnit = requestRetryTimeoutUnit;
-      return this;
-    }
-
-    @Override
-    public BuildStep withAccessToken(final String accessToken) {
-      this.accessToken = accessToken;
-      return this;
-    }
-
-    @Override
-    public AccessTokenStep withClientId(final String clientId) {
-      this.clientId = clientId;
-      return this;
-    }
-
-    @Override
-    public ClientIdStep withStoreHash(final String storeHash) {
-      this.storeHash = storeHash;
-      return this;
-    }
-
-    @Override
-    public BigcommerceSdk build() {
-      return new BigcommerceSdk(this);
-    }
-
-  }
-
   private <T> T get(final WebTarget webTarget, final Class<T> entityType) {
     final Callable<Response> responseCallable = () -> webTarget.request(MediaType.APPLICATION_JSON)
         .header(CLIENT_ID_HEADER, getClientId()).header(ACCESS_TOKEN_HEADER, getAccessToken())
@@ -695,6 +658,87 @@ public class BigcommerceSdk {
       return response.readEntity(entityType);
     }
     throw new BigcommerceErrorResponseException(response);
+  }
+
+  public static interface ApiUrlStep {
+
+    RequestRetryTimeoutStep withApiUrl(final String apiUrl);
+  }
+
+  public static interface RequestRetryTimeoutStep {
+
+    StoreHashStep withRequestRetryTimeout(final long requestRetryTimeoutDuration,
+        final TimeUnit requestRetryTimeoutUnit);
+  }
+
+  public static interface StoreHashStep {
+
+    ClientIdStep withStoreHash(final String storeHash);
+  }
+
+  public static interface ClientIdStep {
+
+    AccessTokenStep withClientId(final String clientId);
+  }
+
+  public static interface AccessTokenStep {
+
+    BuildStep withAccessToken(final String accessToken);
+  }
+
+  public static interface BuildStep {
+
+    BigcommerceSdk build();
+  }
+
+  private static class Steps
+      implements ApiUrlStep, RequestRetryTimeoutStep, StoreHashStep, ClientIdStep, AccessTokenStep,
+      BuildStep {
+
+    private String apiUrl = "https://api.bigcommerce.com/stores";
+    private long requestRetryTimeoutDuration = 5;
+    private TimeUnit requestRetryTimeoutUnit = TimeUnit.MINUTES;
+    private String storeHash;
+    private String clientId;
+    private String accessToken;
+
+    @Override
+    public RequestRetryTimeoutStep withApiUrl(final String apiUrl) {
+      this.apiUrl = apiUrl;
+      return this;
+    }
+
+    @Override
+    public StoreHashStep withRequestRetryTimeout(final long requestRetryTimeoutDuration,
+        final TimeUnit requestRetryTimeoutUnit) {
+      this.requestRetryTimeoutDuration = requestRetryTimeoutDuration;
+      this.requestRetryTimeoutUnit = requestRetryTimeoutUnit;
+      return this;
+    }
+
+    @Override
+    public BuildStep withAccessToken(final String accessToken) {
+      this.accessToken = accessToken;
+      return this;
+    }
+
+    @Override
+    public AccessTokenStep withClientId(final String clientId) {
+      this.clientId = clientId;
+      return this;
+    }
+
+    @Override
+    public ClientIdStep withStoreHash(final String storeHash) {
+      this.storeHash = storeHash;
+      return this;
+    }
+
+    @Override
+    public BigcommerceSdk build() {
+      return new BigcommerceSdk(this);
+    }
+
   }
 
   private class ResponseWaitStrategy implements WaitStrategy {

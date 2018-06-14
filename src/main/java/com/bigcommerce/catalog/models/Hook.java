@@ -12,86 +12,74 @@ import org.joda.time.DateTime;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
-public class Hook
-{
-	@XmlElement(name = "id")
-	private Integer id;
+public class Hook {
 
-	@XmlElement(name = "scope")
-    private String scope;
+  @XmlElement(name = "id")
+  private Integer id;
 
-	@XmlElement(name = "is_active")
-    private Boolean is_active;
+  @XmlElement(name = "scope")
+  private String scope;
 
-	@XmlElement(name = "destination")
-    private String destination;
-	
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	@XmlElement(name = "updated_at")
-	private DateTime updated_at;
-	
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	@XmlElement(name = "created_at")
-	private DateTime created_at;
-	
-	public Integer getId ()
-    {
-        return id;
-    }
+  @XmlElement(name = "is_active")
+  private Boolean is_active;
 
-    public void setId (Integer id)
-    {
-        this.id = id;
-    }
+  @XmlElement(name = "destination")
+  private String destination;
 
-    public String getScope ()
-    {
-        return scope;
-    }
+  @XmlJavaTypeAdapter(DateTimeAdapter.class)
+  @XmlElement(name = "updated_at")
+  private DateTime updated_at;
 
-    public void setScope (String scope)
-    {
-        this.scope = scope;
-    }
+  @XmlJavaTypeAdapter(DateTimeAdapter.class)
+  @XmlElement(name = "created_at")
+  private DateTime created_at;
 
-    public Boolean getIs_active ()
-    {
-        return is_active;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setIs_active (Boolean is_active)
-    {
-        this.is_active = is_active;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public String getDestination ()
-    {
-        return destination;
-    }
+  public String getScope() {
+    return scope;
+  }
 
-    public void setDestination (String destination)
-    {
-        this.destination = destination;
-    }
-    
-    public DateTime getCreated_at ()
-    {
-        return created_at;
-    }
+  public void setScope(String scope) {
+    this.scope = scope;
+  }
 
-    public void setCreated_at (DateTime created_at)
-    {
-        this.created_at = created_at;
-    }
-    
-    public DateTime getUpdated_at ()
-    {
-        return updated_at;
-    }
+  public Boolean getIs_active() {
+    return is_active;
+  }
 
-    public void setUpdated_at (DateTime updated_at)
-    {
-        this.updated_at = updated_at;
-    }
+  public void setIs_active(Boolean is_active) {
+    this.is_active = is_active;
+  }
+
+  public String getDestination() {
+    return destination;
+  }
+
+  public void setDestination(String destination) {
+    this.destination = destination;
+  }
+
+  public DateTime getCreated_at() {
+    return created_at;
+  }
+
+  public void setCreated_at(DateTime created_at) {
+    this.created_at = created_at;
+  }
+
+  public DateTime getUpdated_at() {
+    return updated_at;
+  }
+
+  public void setUpdated_at(DateTime updated_at) {
+    this.updated_at = updated_at;
+  }
 
 }

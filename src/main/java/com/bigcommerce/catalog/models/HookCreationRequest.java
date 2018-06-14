@@ -2,64 +2,68 @@ package com.bigcommerce.catalog.models;
 
 public class HookCreationRequest {
 
-	private final Hook request;
+  private final Hook request;
 
-	public static ScopeStep newBuilder() {
-		return new Steps();
-	}
+  private HookCreationRequest(final Hook hook) {
+    this.request = hook;
+  }
 
-	public static interface ScopeStep {
-		IsActiveStep withScope(final String scope);
-	}
+  public static ScopeStep newBuilder() {
+    return new Steps();
+  }
 
-	public static interface IsActiveStep {
-		DestinationStep withIsActive(final Boolean is_active);
-	}
+  public Hook getRequest() {
+    return request;
+  }
 
-	public static interface DestinationStep {
-		BuildStep withDestination(final String destination);
-	}
+  public static interface ScopeStep {
 
-	private HookCreationRequest(final Hook hook) {
-		this.request = hook;
-	}
+    IsActiveStep withScope(final String scope);
+  }
 
-	public static interface BuildStep {
-		HookCreationRequest build();
-	}
+  public static interface IsActiveStep {
 
-	public Hook getRequest() {
-		return request;
-	}
+    DestinationStep withIsActive(final Boolean is_active);
+  }
 
-	private static class Steps implements ScopeStep, IsActiveStep, DestinationStep, BuildStep {
+  public static interface DestinationStep {
 
-		private final Hook request = new Hook();
+    BuildStep withDestination(final String destination);
+  }
 
-		@Override
-		public HookCreationRequest build() {
-			return new HookCreationRequest(request);
-		}
+  public static interface BuildStep {
 
-		@Override
-		public BuildStep withDestination(String destination) {
-			request.setDestination(destination);
-			return this;
-		}
+    HookCreationRequest build();
+  }
 
-		@Override
-		public DestinationStep withIsActive(Boolean is_active) {
-			request.setIs_active(is_active);
-			return this;
-		}
+  private static class Steps implements ScopeStep, IsActiveStep, DestinationStep, BuildStep {
 
-		@Override
-		public IsActiveStep withScope(String scope) {
-			request.setScope(scope);
-			return this;
-		}
+    private final Hook request = new Hook();
 
-	}
+    @Override
+    public HookCreationRequest build() {
+      return new HookCreationRequest(request);
+    }
+
+    @Override
+    public BuildStep withDestination(String destination) {
+      request.setDestination(destination);
+      return this;
+    }
+
+    @Override
+    public DestinationStep withIsActive(Boolean is_active) {
+      request.setIs_active(is_active);
+      return this;
+    }
+
+    @Override
+    public IsActiveStep withScope(String scope) {
+      request.setScope(scope);
+      return this;
+    }
+
+  }
 
 }
 

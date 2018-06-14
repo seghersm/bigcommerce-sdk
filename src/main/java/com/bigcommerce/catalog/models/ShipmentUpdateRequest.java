@@ -2,84 +2,91 @@ package com.bigcommerce.catalog.models;
 
 public class ShipmentUpdateRequest {
 
-	private final Shipment request;
+  private final Shipment request;
 
-	public static TrackingNumberStep newBuilder() {
-		return new Steps();
-	}
+  private ShipmentUpdateRequest(final Shipment shipment) {
+    this.request = shipment;
+  }
 
-	public static interface TrackingNumberStep {
-		CommentsStep withTrackingNumber(final String trackingNumber);
-	}
+  public static TrackingNumberStep newBuilder() {
+    return new Steps();
+  }
 
-	public static interface CommentsStep {
-		OrderAddressIdStep withComments(final String comments);
-	}
+  public Shipment getRequest() {
+    return request;
+  }
 
-	public static interface OrderAddressIdStep {
-		ShippingProviderStep withOrderAddressId(final int orderAddressId);
-	}
+  public static interface TrackingNumberStep {
 
-	public static interface ShippingProviderStep {
-		TrackingCarrierStep withShippingProvider(final String shippingProvider);
-	}
+    CommentsStep withTrackingNumber(final String trackingNumber);
+  }
 
-	public static interface TrackingCarrierStep {
-		BuildStep withTrackingCarrier(final String trackingCarrier);
-	}
+  public static interface CommentsStep {
 
-	private ShipmentUpdateRequest(final Shipment shipment) {
-		this.request = shipment;
-	}
+    OrderAddressIdStep withComments(final String comments);
+  }
 
-	public static interface BuildStep {
-		ShipmentUpdateRequest build();
-	}
+  public static interface OrderAddressIdStep {
 
-	public Shipment getRequest() {
-		return request;
-	}
+    ShippingProviderStep withOrderAddressId(final int orderAddressId);
+  }
 
-	private static class Steps implements TrackingNumberStep, CommentsStep, OrderAddressIdStep, ShippingProviderStep,
-			TrackingCarrierStep, BuildStep {
+  public static interface ShippingProviderStep {
 
-		private final Shipment request = new Shipment();
+    TrackingCarrierStep withShippingProvider(final String shippingProvider);
+  }
 
-		@Override
-		public ShipmentUpdateRequest build() {
-			return new ShipmentUpdateRequest(request);
-		}
+  public static interface TrackingCarrierStep {
 
-		@Override
-		public TrackingCarrierStep withShippingProvider(String shippingProvider) {
-			request.setShippingProvider(shippingProvider);
-			return this;
-		}
+    BuildStep withTrackingCarrier(final String trackingCarrier);
+  }
 
-		@Override
-		public ShippingProviderStep withOrderAddressId(int orderAddressId) {
-			request.setOrderAddressId(orderAddressId);
-			return this;
-		}
+  public static interface BuildStep {
 
-		@Override
-		public OrderAddressIdStep withComments(String comments) {
-			request.setComments(comments);
-			return this;
-		}
+    ShipmentUpdateRequest build();
+  }
 
-		@Override
-		public CommentsStep withTrackingNumber(String trackingNumber) {
-			request.setTrackingNumber(trackingNumber);
-			return this;
-		}
+  private static class Steps implements TrackingNumberStep, CommentsStep, OrderAddressIdStep,
+      ShippingProviderStep,
+      TrackingCarrierStep, BuildStep {
 
-		@Override
-		public BuildStep withTrackingCarrier(String trackingCarrier) {
-			request.setTrackingCarrier(trackingCarrier);
-			return this;
-		}
+    private final Shipment request = new Shipment();
 
-	}
+    @Override
+    public ShipmentUpdateRequest build() {
+      return new ShipmentUpdateRequest(request);
+    }
+
+    @Override
+    public TrackingCarrierStep withShippingProvider(String shippingProvider) {
+      request.setShippingProvider(shippingProvider);
+      return this;
+    }
+
+    @Override
+    public ShippingProviderStep withOrderAddressId(int orderAddressId) {
+      request.setOrderAddressId(orderAddressId);
+      return this;
+    }
+
+    @Override
+    public OrderAddressIdStep withComments(String comments) {
+      request.setComments(comments);
+      return this;
+    }
+
+    @Override
+    public CommentsStep withTrackingNumber(String trackingNumber) {
+      request.setTrackingNumber(trackingNumber);
+      return this;
+    }
+
+    @Override
+    public BuildStep withTrackingCarrier(String trackingCarrier) {
+      request.setTrackingCarrier(trackingCarrier);
+      return this;
+    }
+
+  }
 
 }

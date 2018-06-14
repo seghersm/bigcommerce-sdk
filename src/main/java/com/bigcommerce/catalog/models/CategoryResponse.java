@@ -4,23 +4,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class CategoryResponse {
-	private Category data;
 
-	private Meta meta;
+  private Category data;
 
-	public Category getData() {
-		return data;
-	}
+  private Meta meta;
 
-	public void setData(final Category data) {
-		this.data = data;
-	}
+  public Category getData() {
+    return data;
+  }
 
-	public Meta getMeta() {
-		return meta;
-	}
+  public void setData(final Category data) {
+    this.data = data;
+  }
 
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+  public Meta getMeta() {
+    return meta;
+  }
+
+  public void setMeta(Meta meta) {
+    this.meta = meta;
+  }
 }

@@ -4,14 +4,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class MetafieldResponse {
-	private Metafield data;
 
-	public Metafield getData() {
-		return data;
-	}
+  private Metafield data;
 
-	public void setData(final Metafield data) {
-		this.data = data;
-	}
+  public Metafield getData() {
+    return data;
+  }
+
+  public void setData(final Metafield data) {
+    this.data = data;
+  }
 
 }
