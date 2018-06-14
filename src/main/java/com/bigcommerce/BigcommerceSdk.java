@@ -65,7 +65,10 @@ public class BigcommerceSdk {
   public static final String PAGE = "page";
   public static final String INCLUDE = "include";
   public static final String SHIPPINGADDRESSES = "shipping_addresses";
+  private static final String HOOKS = "hooks";
+  private static final String SKU = "sku";
   public static final String SHIPMENTS = "shipments";
+  public static final String SUBSCRIBERS = "subscribers";
   public static final String MIN_DATE_CREATED = "min_date_created";
   public static final String STORE = "store";
   public static final String METAFIELDS = "metafields";
@@ -183,6 +186,12 @@ public class BigcommerceSdk {
     return new Products(products, pagination);
   }
 
+  public ProductsResponse getProductById(final String productIds) {
+    final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(PRODUCTS)
+        .queryParam("id", productIds);
+    return get(webTarget, ProductsResponse.class);
+  }
+
   public Category createCategory(final Category category) {
     final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(CATEGORIES);
     final CategoryResponse categoryResponse = post(webTarget, category, CategoryResponse.class);
@@ -233,6 +242,13 @@ public class BigcommerceSdk {
     final List<Category> categories = categoriesResponse.getData();
     final Pagination pagination = categoriesResponse.getMeta().getPagination();
     return new Categories(categories, pagination);
+  }
+
+  public Variant getVariant(final String sku) {
+    final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(VARIANTS).queryParam(SKU, sku);
+    final VariantsResponse variantResponse = get(webTarget, VariantsResponse.class);
+    return (variantResponse == null || variantResponse.getData().isEmpty())
+        ? null : variantResponse.getData().get(0);
   }
 
   public Variants getVariants(final int page) {
@@ -435,6 +451,19 @@ public class BigcommerceSdk {
     return get(webTarget, Customer.class);
   }
 
+  public List<Customer> getCustomers() {
+    final WebTarget webTarget = baseWebTargetV2.path(CUSTOMERS);
+    CustomersResponse customersResponse = get(webTarget, CustomersResponse.class);
+    return customersResponse;
+  }
+
+  public Subscribers getSubscribers() {
+    final WebTarget webTarget = baseWebTargetV3.path(CUSTOMERS).path(SUBSCRIBERS);
+    SubscriberResponse customersResponse = get(webTarget, SubscriberResponse.class);
+    return new Subscribers(customersResponse.getData(),
+        customersResponse.getMeta().getPagination());
+  }
+
   public Variant updateVariant(final Variant variant) {
     final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(PRODUCTS)
         .path(String.valueOf(variant.getProductId())).path(VARIANTS)
@@ -469,7 +498,22 @@ public class BigcommerceSdk {
         .path(SHIPMENTS);
 
     return post(webTarget, shipmentCreationRequest.getRequest(), Shipment.class);
+  }
 
+  public GenericDelete deleteHooks(final int hookId) {
+    final WebTarget webTarget = baseWebTargetV2.path(HOOKS).path(String.valueOf(hookId));
+    return delete(webTarget, GenericDelete.class);
+  }
+
+  public List<Hook> getHooks() {
+    final WebTarget webTarget = baseWebTargetV2.path(HOOKS);
+    final HookResponse hookResponse = get(webTarget, HookResponse.class);
+    return (hookResponse == null) ? Collections.emptyList() : hookResponse;
+  }
+
+  public OrderHookResponse createOrderHook(final HookCreationRequest hookCreationRequest) {
+    final WebTarget webTarget = baseWebTargetV2.path(HOOKS);
+    return post(webTarget, hookCreationRequest.getRequest(), OrderHookResponse.class);
   }
 
   public Shipment updateShipment(final ShipmentUpdateRequest shipmentUpdateRequest,
