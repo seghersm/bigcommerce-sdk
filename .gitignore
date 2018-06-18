@@ -15,3 +15,8 @@
 # Maven
 log/
 target/
+
+# Gradle
+build/
+out/
+.gradle/
