@@ -259,6 +259,23 @@ public class BigcommerceSdk {
     return new Categories(categories, pagination);
   }
 
+  public Categories getCategoriesWithParent(final Integer parentId, final int page, final int limit) {
+    WebTarget webTarget = baseWebTargetV3
+        .path(CATALOG)
+        .path(CATEGORIES)
+        .queryParam(LIMIT, limit)
+        .queryParam(PAGE, page);
+
+    if (parentId != null) {
+      webTarget = webTarget.queryParam(PARENT_ID, parentId);
+    }
+    final CategoriesResponse categoriesResponse = get(webTarget, CategoriesResponse.class);
+    final List<Category> categories= categoriesResponse.getData();
+    final Pagination pagination = categoriesResponse.getMeta().getPagination();
+
+    return new Categories(categories, pagination);
+  }
+
   public Categories getCategoriesAsTree() {
     final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(CATEGORIES).path(TREE);
     final CategoriesResponse categoriesResponse = get(webTarget, CategoriesResponse.class);
@@ -319,7 +336,7 @@ public class BigcommerceSdk {
   public ProductImage createProductImage(final ProductImage productImage) {
     final WebTarget webTarget = baseWebTargetV3.path(CATALOG).path(PRODUCTS)
         .path(String.valueOf(productImage.getProductId())).path(IMAGES);
-    final ProductImageResponse productImageResponse = post(webTarget, productImage,
+    final ProductImageResponse productImageResponse = postWithoutRetry(webTarget, productImage,
         ProductImageResponse.class);
     return productImageResponse.getData();
   }
@@ -616,6 +633,20 @@ public class BigcommerceSdk {
     return handleResponse(response, entityType, Status.OK, Status.CREATED);
   }
 
+  private <T, V> V postWithoutRetry(final WebTarget webTarget, final T object, final Class<V> entityType) {
+    final Callable<Response> responseCallable = () -> {
+      final Entity<T> entity = Entity.entity(object, MEDIA_TYPE);
+      return webTarget.request().header(CLIENT_ID_HEADER, getClientId())
+          .header(ACCESS_TOKEN_HEADER, getAccessToken()).post(entity);
+    };
+    Retryer<Response> retryer = RetryerBuilder.<Response>newBuilder()
+        .retryIfResult(this::doNotRetryOnError)
+        .withWaitStrategy(new ResponseWaitStrategy())
+        .build();
+    final Response response = invokeResponseCallable(responseCallable, retryer);
+    return handleResponse(response, entityType, Status.OK, Status.CREATED);
+  }
+
   private <V> V post(final WebTarget webTarget, final MultiPart multiPart,
       final Class<V> entityType) {
     final Callable<Response> responseCallable = () -> {
@@ -628,7 +659,10 @@ public class BigcommerceSdk {
   }
 
   private Response invokeResponseCallable(final Callable<Response> responseCallable) {
-    final Retryer<Response> retryer = buildResponseRetyer();
+    return invokeResponseCallable(responseCallable, buildResponseRetyer());
+  }
+
+  private Response invokeResponseCallable(final Callable<Response> responseCallable, Retryer<Response> retryer ) {
     try {
       return retryer.call(responseCallable);
     } catch (ExecutionException | RetryException e) {
@@ -647,6 +681,10 @@ public class BigcommerceSdk {
   private boolean shouldRetryResponse(final Response response) {
     return (Status.Family.SERVER_ERROR == Status.Family.familyOf(response.getStatus()))
         || (TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus());
+  }
+
+  private boolean doNotRetryOnError(final Response response) {
+    return (TOO_MANY_REQUESTS_STATUS_CODE == response.getStatus());
   }
 
   private <T> T handleResponse(final Response response, final Class<T> entityType,
