@@ -67,6 +67,9 @@ public class Product {
   @XmlElement(name = "images")
   private List<ProductImage> productImages;
 
+  @XmlElement(name = "product_tax_code")
+  private String taxCode;
+
   public Integer getId() {
     return id;
   }
@@ -265,6 +268,14 @@ public class Product {
 
   public void setProductImages(List<ProductImage> productImages) {
     this.productImages = productImages;
+  }
+
+  public String getTaxCode() {
+    return taxCode;
+  }
+
+  public void setTaxCode(String taxCode) {
+    this.taxCode = taxCode;
   }
 }
 
